@@ -39,6 +39,10 @@ jobs:
     name: 'Terraform Apply'
     runs-on: ubuntu-latest
     
+    concurrency:
+      group: terraform-${{ github.ref }}
+      cancel-in-progress: false
+    
     # Define steps for the job
     steps:
     # Checkout the repository to the GitHub Actions runner
@@ -53,7 +57,7 @@ jobs:
 
     # Initialize a new or existing Terraform working directory
     - name: Terraform Init
-      run: terraform init
+      run: terraform init -reconfigure
 
     # Check formatting
     - name: Terraform Format
@@ -66,7 +70,7 @@ jobs:
     # Generates an execution plan
     - name: Terraform Plan
       id: plan
-      run: terraform plan -no-color -input=false
+      run: terraform plan -no-color -out=tfplan -input=false
       continue-on-error: true
 
     # Fail the job if the plan fails
@@ -77,6 +81,6 @@ jobs:
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      run: terraform apply -auto-approve -input=false
+      run: terraform apply -input=false tfplan
 
 
