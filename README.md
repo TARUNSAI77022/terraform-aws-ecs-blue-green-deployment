@@ -4,15 +4,16 @@ This repository contains a production-ready Terraform setup to provision a scala
 
 ## 🌟 Architecture Overview
 
-This project sets up the following resources in the `ap-south-1` region:
+This project sets up the following resources in the `ap-south-1` region using a scalable **modular architecture**:
 
+- **Modules**: Reusable building blocks for VPC, ALB, ECS, etc.
+- **Environment (dev)**: Environment-specific configurations using modules.
 - **VPC** with CIDR `10.0.0.0/16` (`inti-ruchi-cluster-vpc`).
 - **2 Public Subnets** across two different Availability Zones (with auto-assigned public IP enabled).
 - **2 Private Subnets** across two different Availability Zones.
 - **Internet Gateway (IGW)** for public internet access.
 - **NAT Gateway (with Elastic IP)** allowing private subnets to securely access the internet.
-- **Public Route Table** connected to the IGW.
-- **Private Route Table** connected to the NAT Gateway.
+- **Application Load Balancer (ALB)** distributing traffic across targets.
 - **Consistent Tagging** across all resources (Name, Environment, Project).
 
 ### 🖼️ Architecture Diagram
@@ -141,9 +142,11 @@ terraform validate
 
 ### 🏗️ 4. Deploy Infrastructure
 
-Run the following Terraform commands to provision the network:
+Navigate to the dev environment and run the following Terraform commands:
 
 ```bash
+cd env/dev
+
 # Initialize the Terraform working directory
 terraform init
 
@@ -156,6 +159,7 @@ terraform apply
 
 To destroy the infrastructure when you're done testing:
 ```bash
+cd env/dev
 terraform destroy
 ```
 

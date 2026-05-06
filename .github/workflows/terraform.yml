@@ -30,6 +30,10 @@ env:
   TF_VAR_project_name: ${{ inputs.project_name || 'inti-ruchi-cluster' }}
   TF_VAR_environment: ${{ inputs.environment || 'dev' }}
 
+defaults:
+  run:
+    working-directory: ./env/dev
+
 jobs:
   terraform_apply:
     name: 'Terraform Apply'

@@ -25,6 +25,10 @@ env:
   TF_VAR_project_name: ${{ inputs.project_name }}
   TF_VAR_environment: ${{ inputs.environment }}
 
+defaults:
+  run:
+    working-directory: ./env/dev
+
 jobs:
   terraform_destroy:
     name: 'Terraform Destroy'
