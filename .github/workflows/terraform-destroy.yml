@@ -17,13 +17,18 @@ on:
           - dev
           - staging
           - prod
+      destroy_confirm:
+        description: 'Type YES to confirm destroy'
+        required: true
+        default: 'NO'
+        type: string
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: 'ap-south-1'
-  TF_VAR_project_name: ${{ inputs.project_name }}
-  TF_VAR_environment: ${{ inputs.environment }}
+  TF_VAR_project_name: ${{ inputs.project_name || 'inti-ruchi-cluster' }}
+  TF_VAR_environment: ${{ inputs.environment || 'dev' }}
 
 defaults:
   run:
@@ -34,6 +39,15 @@ jobs:
     name: 'Terraform Destroy'
     runs-on: ubuntu-latest
     
+    # Destroy is separated and runs only via workflow_dispatch.
+    # It requires explicit manual approval (destroy_confirm == 'YES') which is safer
+    # than automatic execution, preventing accidental infrastructure deletion.
+    if: github.event.inputs.destroy_confirm == 'YES'
+    
+    concurrency:
+      group: terraform-${{ github.ref }}
+      cancel-in-progress: false
+      
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -43,8 +57,17 @@ jobs:
       with:
         terraform_version: 1.5.0
 
+    # Explanation of backend mechanisms during destroy:
+    # 1. Remote state in S3 correctly identifies all existing deployed resources to ensure a clean teardown.
+    # 2. DynamoDB locking prevents any concurrent operations (like another apply/destroy) from corrupting the state file.
     - name: Terraform Init
-      run: terraform init
+      run: terraform init -reconfigure
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan Destroy
+      run: terraform plan -destroy -out=tfplan-destroy -input=false
 
     - name: Terraform Destroy
-      run: terraform destroy -auto-approve -input=false
+      run: terraform apply -auto-approve tfplan-destroy
