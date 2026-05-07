@@ -24,6 +24,10 @@ on:
         type: string
 
 env:
+  # GitHub Actions is migrating from Node.js 20 to Node.js 24.
+  # This change future-proofs the CI/CD workflows for the new runner version.
+  # Current workflows remain compatible during the migration process.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_REGION: 'ap-south-1'
