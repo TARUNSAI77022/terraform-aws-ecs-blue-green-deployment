@@ -23,3 +23,20 @@ module "ecr" {
   project_name = var.project_name
   environment  = var.environment
 }
+
+module "ecs" {
+  source = "../../modules/ecs"
+
+  project_name       = var.project_name
+  environment        = var.environment
+  aws_region         = var.aws_region
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+
+  container_name  = "app-container"
+  container_port  = 80
+  container_image = "${module.ecr.repository_url}:latest"
+  desired_count   = 2
+  cpu             = 256
+  memory          = 512
+}
