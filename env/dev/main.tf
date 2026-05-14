@@ -33,12 +33,12 @@ module "ecs" {
   vpc_id             = module.vpc.vpc_id
   private_subnet_ids = module.vpc.public_subnet_ids
 
-  container_name  = "app-container"
-  container_port  = 80
-  container_image = "${module.ecr.repository_url}:latest"
-  desired_count   = 2
-  cpu             = 256
-  memory          = 512
+  container_name   = "app-container"
+  container_port   = 80
+  container_image  = "${module.ecr.repository_url}:latest"
+  desired_count    = 2
+  cpu              = 256
+  memory           = 512
   target_group_arn = module.alb.alb_target_group_blue_arn
 }
 
