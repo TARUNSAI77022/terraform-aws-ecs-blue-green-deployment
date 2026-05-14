@@ -31,7 +31,7 @@ module "ecs" {
   environment        = var.environment
   aws_region         = var.aws_region
   vpc_id             = module.vpc.vpc_id
-  private_subnet_ids = module.vpc.private_subnet_ids
+  private_subnet_ids = module.vpc.public_subnet_ids
 
   container_name  = "app-container"
   container_port  = 80
@@ -39,4 +39,17 @@ module "ecs" {
   desired_count   = 2
   cpu             = 256
   memory          = 512
+  target_group_arn = module.alb.alb_target_group_blue_arn
+}
+
+module "codedeploy" {
+  source = "../../modules/codedeploy"
+
+  project_name            = var.project_name
+  environment             = var.environment
+  ecs_cluster_name        = module.ecs.ecs_cluster_name
+  ecs_service_name        = module.ecs.ecs_service_name
+  alb_listener_arn        = module.alb.alb_listener_arn
+  blue_target_group_name  = module.alb.alb_target_group_blue_name
+  green_target_group_name = module.alb.alb_target_group_green_name
 }

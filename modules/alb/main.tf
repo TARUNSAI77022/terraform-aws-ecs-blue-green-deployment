@@ -47,10 +47,10 @@ resource "aws_lb" "main" {
 }
 
 # ------------------------------------------------------------------------------
-# Target Group
+# Target Groups (Blue / Green)
 # ------------------------------------------------------------------------------
-resource "aws_lb_target_group" "main" {
-  name        = "${local.name_prefix}-tg"
+resource "aws_lb_target_group" "blue" {
+  name        = "${local.name_prefix}-tg-blue"
   port        = 80
   protocol    = "HTTP"
   target_type = "ip"
@@ -67,7 +67,29 @@ resource "aws_lb_target_group" "main" {
   }
 
   tags = {
-    Name = "${local.name_prefix}-tg"
+    Name = "${local.name_prefix}-tg-blue"
+  }
+}
+
+resource "aws_lb_target_group" "green" {
+  name        = "${local.name_prefix}-tg-green"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "ip"
+  vpc_id      = var.vpc_id
+
+  health_check {
+    path                = "/"
+    protocol            = "HTTP"
+    matcher             = "200-399"
+    interval            = 30
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+  }
+
+  tags = {
+    Name = "${local.name_prefix}-tg-green"
   }
 }
 
@@ -81,6 +103,11 @@ resource "aws_lb_listener" "http" {
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.main.arn
+    target_group_arn = aws_lb_target_group.blue.arn
+  }
+
+  # CodeDeploy will switch the target group between blue and green
+  lifecycle {
+    ignore_changes = [default_action]
   }
 }

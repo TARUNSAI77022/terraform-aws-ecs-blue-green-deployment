@@ -75,30 +75,30 @@ resource "aws_subnet" "private" {
 # NAT Gateway and Elastic IP
 # ------------------------------------------------------------------------------
 # Allocate an Elastic IP for the NAT Gateway
-resource "aws_eip" "nat" {
-  domain = "vpc"
+# resource "aws_eip" "nat" {
+#   domain = "vpc"
 
-  tags = {
-    Name = "${local.name_prefix}-nat-eip"
-  }
+#   tags = {
+#     Name = "${local.name_prefix}-nat-eip"
+#   }
 
-  depends_on = [aws_internet_gateway.igw]
-}
+#   depends_on = [aws_internet_gateway.igw]
+# }
 
 # The NAT Gateway allows instances in private subnets to initiate outbound 
 # traffic to the internet (e.g., for updates) while preventing inbound traffic.
 # Currently deployed as a Single NAT Gateway in the first public subnet 
 # to optimize costs. (Note: This is a single point of failure).
-resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id     = aws_subnet.public[0].id
+# resource "aws_nat_gateway" "nat" {
+#   allocation_id = aws_eip.nat.id
+#   subnet_id     = aws_subnet.public[0].id
 
-  tags = {
-    Name = "${local.name_prefix}-nat"
-  }
+#   tags = {
+#     Name = "${local.name_prefix}-nat"
+#   }
 
-  depends_on = [aws_internet_gateway.igw]
-}
+#   depends_on = [aws_internet_gateway.igw]
+# }
 
 # --- Optional Multi-NAT Gateway setup for full High Availability ---
 # Uncomment the following block (and comment out the single NAT setup above)
@@ -142,18 +142,18 @@ resource "aws_route_table" "public" {
 
 # Private Route Table: Routes 0.0.0.0/0 to the NAT Gateway.
 # Note: For Multi-NAT setup, you would need one private route table per AZ.
-resource "aws_route_table" "private" {
-  vpc_id = aws_vpc.main.id
+# resource "aws_route_table" "private" {
+#   vpc_id = aws_vpc.main.id
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
-  }
+#   route {
+#     cidr_block     = "0.0.0.0/0"
+#     nat_gateway_id = aws_nat_gateway.nat.id
+#   }
 
-  tags = {
-    Name = "${local.name_prefix}-private-rt"
-  }
-}
+#   tags = {
+#     Name = "${local.name_prefix}-private-rt"
+#   }
+# }
 
 # ------------------------------------------------------------------------------
 # Route Table Associations
@@ -168,8 +168,8 @@ resource "aws_route_table_association" "public" {
 }
 
 # Associate Private Subnets with Private Route Table
-resource "aws_route_table_association" "private" {
-  count          = length(aws_subnet.private)
-  subnet_id      = aws_subnet.private[count.index].id
-  route_table_id = aws_route_table.private.id
-}
+# resource "aws_route_table_association" "private" {
+#   count          = length(aws_subnet.private)
+#   subnet_id      = aws_subnet.private[count.index].id
+#   route_table_id = aws_route_table.private.id
+# }

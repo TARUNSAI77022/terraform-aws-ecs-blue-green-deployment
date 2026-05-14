@@ -33,6 +33,11 @@ variable "container_image" {
   description = "The ECR image URL to deploy"
 }
 
+variable "target_group_arn" {
+  type        = string
+  description = "The ARN of the ALB Target Group to attach the ECS service to"
+}
+
 variable "desired_count" {
   type        = number
   description = "Number of desired tasks to run"

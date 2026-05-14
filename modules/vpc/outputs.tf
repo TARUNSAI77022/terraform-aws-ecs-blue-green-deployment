@@ -18,12 +18,12 @@ output "internet_gateway_id" {
   value       = aws_internet_gateway.igw.id
 }
 
-output "nat_gateway_id" {
-  description = "The ID of the NAT Gateway"
-  value       = aws_nat_gateway.nat.id
-}
+# output "nat_gateway_id" {
+#   description = "The ID of the NAT Gateway"
+#   value       = aws_nat_gateway.nat.id
+# }
 
-output "nat_gateway_public_ip" {
-  description = "The Elastic IP address associated with the NAT Gateway"
-  value       = aws_eip.nat.public_ip
-}
+# output "nat_gateway_public_ip" {
+#   description = "The Elastic IP address associated with the NAT Gateway"
+#   value       = aws_eip.nat.public_ip
+# }
