@@ -34,7 +34,7 @@ module "ecs" {
   private_subnet_ids = module.vpc.public_subnet_ids
 
   container_name   = "app-container"
-  container_port   = 80
+  container_port   = 5000
   container_image  = "${module.ecr.repository_url}:latest"
   desired_count    = 2
   cpu              = 256

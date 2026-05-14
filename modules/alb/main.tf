@@ -51,13 +51,13 @@ resource "aws_lb" "main" {
 # ------------------------------------------------------------------------------
 resource "aws_lb_target_group" "blue" {
   name        = "${local.name_prefix}-tg-blue"
-  port        = 80
+  port        = 5000
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/"
+    path                = "/api/health"
     protocol            = "HTTP"
     matcher             = "200-399"
     interval            = 30
@@ -73,13 +73,13 @@ resource "aws_lb_target_group" "blue" {
 
 resource "aws_lb_target_group" "green" {
   name        = "${local.name_prefix}-tg-green"
-  port        = 80
+  port        = 5000
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = var.vpc_id
 
   health_check {
-    path                = "/"
+    path                = "/api/health"
     protocol            = "HTTP"
     matcher             = "200-399"
     interval            = 30
