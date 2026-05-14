@@ -86,11 +86,15 @@ resource "aws_ecs_task_definition" "main" {
 
 # ECS Service
 resource "aws_ecs_service" "main" {
-  name            = "${var.project_name}-${var.environment}-service"
+  name            = "${var.project_name}-${var.environment}-bg-service"
   cluster         = aws_ecs_cluster.main.id
   task_definition = aws_ecs_task_definition.main.arn
   desired_count   = var.desired_count
   launch_type     = "FARGATE"
+
+  deployment_controller {
+    type = "CODE_DEPLOY"
+  }
 
   network_configuration {
     subnets          = var.private_subnet_ids
