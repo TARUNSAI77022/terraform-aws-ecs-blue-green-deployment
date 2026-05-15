@@ -62,6 +62,11 @@ resource "aws_ecs_task_definition" "main" {
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
 
+  depends_on = [
+    aws_iam_role.ecs_task_role,
+    aws_iam_role_policy.ecs_exec_policy
+  ]
+
   container_definitions = jsonencode([{
     name      = var.container_name
     image     = var.container_image
