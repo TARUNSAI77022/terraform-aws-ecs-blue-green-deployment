@@ -139,9 +139,9 @@ resource "aws_ecs_service" "main" {
     container_port   = var.container_port
   }
 
-  # Ignore load balancer changes to allow CodeDeploy to switch targets
+  # Ignore task definition changes to allow CI/CD deployments (like CodeDeploy) to update the service
   lifecycle {
-    ignore_changes = [load_balancer]
+    ignore_changes = [task_definition, load_balancer]
   }
 
   depends_on = [
