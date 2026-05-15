@@ -40,6 +40,14 @@ module "ecs" {
   cpu              = 256
   memory           = 512
   target_group_arn = module.alb.alb_target_group_blue_arn
+
+  mongo_uri        = var.mongo_uri
+  jwt_secret       = var.jwt_secret
+  port             = var.port
+  node_env         = var.node_env
+  base_url         = var.base_url
+  frontend_url     = var.frontend_url
+  alb_security_group_id = module.alb.alb_security_group_id
 }
 
 module "codedeploy" {

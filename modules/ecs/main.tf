@@ -18,11 +18,11 @@ resource "aws_security_group" "ecs_sg" {
 
   # Inbound traffic on container port
   ingress {
-    from_port   = var.container_port
-    to_port     = var.container_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # This will be restricted to ALB SG later
-    description = "Allow inbound traffic on container port"
+    from_port       = var.container_port
+    to_port         = var.container_port
+    protocol        = "tcp"
+    security_groups = [var.alb_security_group_id]
+    description     = "Allow inbound traffic on container port from ALB"
   }
 
   egress {
@@ -68,6 +68,16 @@ resource "aws_ecs_task_definition" "main" {
       hostPort      = var.container_port
       protocol      = "tcp"
     }]
+    environment = [
+      { name = "NODE_ENV", value = var.node_env },
+      { name = "PORT", value = tostring(var.port) },
+      { name = "BASE_URL", value = var.base_url },
+      { name = "FRONTEND_URL", value = var.frontend_url }
+    ]
+    secrets = [
+      { name = "MONGO_URI", valueFrom = aws_ssm_parameter.mongo_uri.arn },
+      { name = "JWT_SECRET", valueFrom = aws_ssm_parameter.jwt_secret.arn }
+    ]
     logConfiguration = {
       logDriver = "awslogs"
       options = {

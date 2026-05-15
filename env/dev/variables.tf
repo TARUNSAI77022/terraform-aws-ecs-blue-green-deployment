@@ -31,3 +31,36 @@ variable "private_subnet_cidrs" {
   type        = list(string)
   default     = ["10.0.10.0/24", "10.0.11.0/24"]
 }
+
+variable "mongo_uri" {
+  description = "MongoDB Connection URI"
+  type        = string
+  sensitive   = true
+}
+
+variable "jwt_secret" {
+  description = "JWT Secret Key"
+  type        = string
+  sensitive   = true
+}
+
+variable "port" {
+  description = "Application port"
+  type        = number
+  default     = 5000
+}
+
+variable "node_env" {
+  description = "Node environment"
+  type        = string
+}
+
+variable "base_url" {
+  description = "Backend Base URL"
+  type        = string
+}
+
+variable "frontend_url" {
+  description = "Frontend Application URL"
+  type        = string
+}

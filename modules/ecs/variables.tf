@@ -60,3 +60,41 @@ variable "aws_region" {
   type        = string
   description = "The AWS region for CloudWatch logs"
 }
+
+variable "mongo_uri" {
+  type        = string
+  description = "MongoDB connection string"
+  sensitive   = true
+}
+
+variable "jwt_secret" {
+  type        = string
+  description = "Secret key for signing JWTs"
+  sensitive   = true
+}
+
+variable "port" {
+  type        = number
+  description = "Application port"
+  default     = 5000
+}
+
+variable "node_env" {
+  type        = string
+  description = "Node environment (e.g., production, dev)"
+}
+
+variable "base_url" {
+  type        = string
+  description = "Backend Base URL"
+}
+
+variable "frontend_url" {
+  type        = string
+  description = "Frontend Application URL"
+}
+
+variable "alb_security_group_id" {
+  type        = string
+  description = "The ID of the ALB Security Group to allow traffic from"
+}
