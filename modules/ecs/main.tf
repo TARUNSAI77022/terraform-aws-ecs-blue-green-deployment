@@ -68,15 +68,13 @@ resource "aws_ecs_task_definition" "main" {
       hostPort      = var.container_port
       protocol      = "tcp"
     }]
-    environment = [
-      { name = "NODE_ENV", value = var.node_env },
-      { name = "PORT", value = tostring(var.port) },
-      { name = "BASE_URL", value = var.base_url },
-      { name = "FRONTEND_URL", value = var.frontend_url }
-    ]
     secrets = [
+      { name = "PORT", valueFrom = aws_ssm_parameter.port.arn },
       { name = "MONGO_URI", valueFrom = aws_ssm_parameter.mongo_uri.arn },
-      { name = "JWT_SECRET", valueFrom = aws_ssm_parameter.jwt_secret.arn }
+      { name = "JWT_SECRET", valueFrom = aws_ssm_parameter.jwt_secret.arn },
+      { name = "NODE_ENV", valueFrom = aws_ssm_parameter.node_env.arn },
+      { name = "BASE_URL", valueFrom = aws_ssm_parameter.base_url.arn },
+      { name = "FRONTEND_URL", valueFrom = aws_ssm_parameter.frontend_url.arn }
     ]
     logConfiguration = {
       logDriver = "awslogs"
