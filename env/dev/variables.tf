@@ -36,12 +36,14 @@ variable "mongo_uri" {
   description = "MongoDB Connection URI"
   type        = string
   sensitive   = true
+  default     = "mongodb://dummy-placeholder"
 }
 
 variable "jwt_secret" {
   description = "JWT Secret Key"
   type        = string
   sensitive   = true
+  default     = "dummy-secret"
 }
 
 variable "port" {
@@ -53,14 +55,17 @@ variable "port" {
 variable "node_env" {
   description = "Node environment"
   type        = string
+  default     = "production"
 }
 
 variable "base_url" {
   description = "Backend Base URL"
   type        = string
+  default     = "https://dummy-api.example.com"
 }
 
 variable "frontend_url" {
   description = "Frontend Application URL"
   type        = string
+  default     = "https://dummy-frontend.example.com"
 }
