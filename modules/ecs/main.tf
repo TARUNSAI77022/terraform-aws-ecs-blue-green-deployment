@@ -86,6 +86,9 @@ resource "aws_ecs_task_definition" "main" {
       retries     = 3
       startPeriod = 60
     }
+    environment = [
+      { name = "FORCE_TASK_DEF_REVISION", value = "1" }
+    ]
     secrets = [
       { name = "PORT", valueFrom = aws_ssm_parameter.port.arn },
       { name = "MONGO_URI", valueFrom = aws_ssm_parameter.mongo_uri.arn },
@@ -140,6 +143,11 @@ resource "aws_ecs_service" "main" {
   lifecycle {
     ignore_changes = [task_definition, load_balancer]
   }
+
+  depends_on = [
+    aws_iam_role_policy.ecs_exec_policy
+  ]
+
   tags = {
     Name        = "${var.project_name}-${var.environment}-ecs-service-main"
     Project     = var.project_name
