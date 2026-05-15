@@ -25,9 +25,11 @@ resource "aws_security_group" "alb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   tags = {
-    Name = "${local.name_prefix}-alb-sg"
+    Name        = "${var.project_name}-${var.environment}-security-group-alb"
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
@@ -40,9 +42,11 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]
   subnets            = var.public_subnet_ids
-
   tags = {
-    Name = "${local.name_prefix}-alb"
+    Name        = "${var.project_name}-${var.environment}-lb-main"
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
@@ -66,9 +70,11 @@ resource "aws_lb_target_group" "blue" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
-
   tags = {
-    Name = "${local.name_prefix}-tg-blue"
+    Name        = "${var.project_name}-${var.environment}-lb-target-group-blue"
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
@@ -89,9 +95,11 @@ resource "aws_lb_target_group" "green" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
   }
-
   tags = {
-    Name = "${local.name_prefix}-tg-green"
+    Name        = "${var.project_name}-${var.environment}-lb-target-group-green"
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
@@ -112,4 +120,12 @@ resource "aws_lb_listener" "http" {
   lifecycle {
     ignore_changes = [default_action]
   }
+
+  tags = {
+    Name        = "${var.project_name}-${var.environment}-lb-listener-http"
+    Project     = var.project_name
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+  }
 }
+

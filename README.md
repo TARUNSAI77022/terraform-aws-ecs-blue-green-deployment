@@ -66,7 +66,7 @@ graph TB
         %% Security Groups
         subgraph SGs ["🛡️ Security Groups Architecture"]
             direction LR
-            ALB_SG["ALB SG<br/>(Inbound: 80/443)"]:::sg
+            ALB_SG["ALB SG<br/>(Inbound: 80)"]:::sg
             App_SG["App SG<br/>(Inbound: From ALB)"]:::sg
             ALB_SG -.->|"Traffic Allowed"| App_SG
         end

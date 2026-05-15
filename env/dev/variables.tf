@@ -69,3 +69,4 @@ variable "frontend_url" {
   type        = string
   default     = "https://dummy-frontend.example.com"
 }
+

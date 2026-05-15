@@ -37,8 +37,8 @@ module "ecs" {
   container_port   = 5000
   container_image  = "${module.ecr.repository_url}:latest"
   desired_count    = 2
-  cpu              = 256
-  memory           = 512
+  cpu              = 512
+  memory           = 1024
   target_group_arn = module.alb.alb_target_group_blue_arn
 
   mongo_uri             = var.mongo_uri

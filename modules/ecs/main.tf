@@ -2,10 +2,11 @@
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
   name              = "/ecs/${var.project_name}-${var.environment}"
   retention_in_days = 30
-
   tags = {
+    Name        = "${var.project_name}-${var.environment}-cloudwatch-log-group-ecs-log-group"
     Project     = var.project_name
     Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
@@ -32,21 +33,22 @@ resource "aws_security_group" "ecs_sg" {
     cidr_blocks = ["0.0.0.0/0"]
     description = "Allow all outbound traffic"
   }
-
   tags = {
-    Name        = "${var.project_name}-${var.environment}-ecs-sg"
+    Name        = "${var.project_name}-${var.environment}-security-group-ecs-sg"
     Project     = var.project_name
     Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
 # ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "${var.project_name}-${var.environment}-cluster"
-
   tags = {
+    Name        = "${var.project_name}-${var.environment}-ecs-cluster-main"
     Project     = var.project_name
     Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
@@ -58,6 +60,7 @@ resource "aws_ecs_task_definition" "main" {
   cpu                      = var.cpu
   memory                   = var.memory
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
 
   container_definitions = jsonencode([{
     name      = var.container_name
@@ -68,6 +71,16 @@ resource "aws_ecs_task_definition" "main" {
       hostPort      = var.container_port
       protocol      = "tcp"
     }]
+    healthCheck = {
+      command = [
+        "CMD-SHELL",
+        "curl -f http://localhost:5000/api/health || exit 1"
+      ]
+      interval    = 30
+      timeout     = 5
+      retries     = 3
+      startPeriod = 60
+    }
     secrets = [
       { name = "PORT", valueFrom = aws_ssm_parameter.port.arn },
       { name = "MONGO_URI", valueFrom = aws_ssm_parameter.mongo_uri.arn },
@@ -85,20 +98,22 @@ resource "aws_ecs_task_definition" "main" {
       }
     }
   }])
-
   tags = {
+    Name        = "${var.project_name}-${var.environment}-ecs-task-definition-main"
     Project     = var.project_name
     Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
 
 # ECS Service
 resource "aws_ecs_service" "main" {
-  name            = "${var.project_name}-${var.environment}-bg-service"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.main.arn
-  desired_count   = var.desired_count
-  launch_type     = "FARGATE"
+  name                   = "${var.project_name}-${var.environment}-bg-service"
+  cluster                = aws_ecs_cluster.main.id
+  task_definition        = aws_ecs_task_definition.main.arn
+  desired_count          = var.desired_count
+  launch_type            = "FARGATE"
+  enable_execute_command = true
 
   deployment_controller {
     type = "CODE_DEPLOY"
@@ -120,9 +135,10 @@ resource "aws_ecs_service" "main" {
   lifecycle {
     ignore_changes = [task_definition, load_balancer]
   }
-
   tags = {
+    Name        = "${var.project_name}-${var.environment}-ecs-service-main"
     Project     = var.project_name
     Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }

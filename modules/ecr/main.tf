@@ -11,9 +11,10 @@ resource "aws_ecr_repository" "this" {
   image_scanning_configuration {
     scan_on_push = true
   }
-
   tags = {
+    Name        = "${var.project_name}-${var.environment}-ecr-repository-this"
     Project     = var.project_name
     Environment = var.environment
+    ManagedBy   = "Terraform"
   }
 }
