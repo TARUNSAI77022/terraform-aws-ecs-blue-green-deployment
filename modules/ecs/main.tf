@@ -87,7 +87,7 @@ resource "aws_ecs_task_definition" "main" {
       startPeriod = 60
     }
     environment = [
-      { name = "FORCE_TASK_DEF_REVISION", value = "1" }
+      { name = "FORCE_TASK_DEF_REVISION", value = "2" }
     ]
     secrets = [
       { name = "PORT", valueFrom = aws_ssm_parameter.port.arn },
@@ -141,7 +141,12 @@ resource "aws_ecs_service" "main" {
 
   # Ignore task definition changes to allow CI/CD deployments (like CodeDeploy) to update the service
   lifecycle {
-    ignore_changes = [task_definition, load_balancer]
+    ignore_changes = [
+      task_definition,
+      load_balancer,
+      desired_count,
+      enable_execute_command
+    ]
   }
 
   depends_on = [
